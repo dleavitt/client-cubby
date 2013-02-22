@@ -1,6 +1,13 @@
 %form(action="/logout" method="post")
   %input(type="submit" value="Logout")
 
+%table
+  - user.all_files.each do |file|
+    %tr
+      %td= file["name"]
+      %td
+        %a{:href => "/u/#{user.name}/#{file["id"]}"} Download
+
 %form{:action => "/u/#{user.name}", :method => "post", :enctype => "multipart/form-data"}
   %input(type="file" name="file")
   %input(type="submit")

@@ -32,7 +32,7 @@ module ClientCubby
     end
 
     def all_files
-      file_ids = $redis.sadd files_ns
+      file_ids = $redis.smembers files_ns
       $redis.pipelined { |r| file_ids.map { |id| r.hgetall(file_ns(id)) } }
     end
 
@@ -57,11 +57,11 @@ module ClientCubby
     end
 
     def file_ns(filename)
-      "files:#{filename}"
+      "#{files_ns}:#{filename}"
     end
 
     def files_ns
-      "users:#{name}:files"
+      "#{ns}:files"
     end
 
     def ns

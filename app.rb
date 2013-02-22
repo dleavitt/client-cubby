@@ -34,6 +34,7 @@ module ClientCubby
       end
 
       def session_auth?
+        # TODO: check against the user in the URL?
         user.exists?
       end
 
@@ -78,17 +79,14 @@ module ClientCubby
       post "/:username" do
         file = request.params["file"]
         file_id = user.create_file(file[:filename])
-        UPLOAD_QUEUE.push :file_id => file_id, :file => file[:tempfile]
-        redirect "/u/:username"
+        UPLOAD_QUEUE.push :file_id  => file_id,
+                          :file     => file[:tempfile],
+                          :user     => user
+        redirect "/u/#{user.name}"
       end
-    end
 
-    namespace "/api" do
-      before do
-        unless http_auth?
-          response['WWW-Authenticate'] = 'Basic realm="Auth Required"'
-          throw :halt, [401, "Not authorized\n"]
-        end
+      get "/:username/:file_id" do
+
       end
     end
   end
