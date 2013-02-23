@@ -74,21 +74,25 @@ module ClientCubby
       redirect "/"
     end
 
-    namespace "/files" do
-      before { redirect "/" unless session_auth? }
+    before("/files*") { redirect "/" unless session_auth? }
 
-      post "/" do
-        file = request.params["file"]
-        file_id = user.create_file(file[:filename])
-        UPLOAD_QUEUE.push :file_id  => file_id,
-                          :file     => file[:tempfile],
-                          :user     => user
-        redirect "/"
-      end
+    get "/files/:id" do
+      # TODO: error if no file
+      @file = user.find_file(params[:id])
+      haml :file
+    end
 
-      get "/:username/:file_id" do
-        
-      end
+    get "/files/:id/download" do
+      @file = user.find_file(params[:id])
+    end
+
+    post "/files" do
+      file = request.params["file"]
+      file_id = user.create_file(file[:filename])
+      UPLOAD_QUEUE.push :file_id  => file_id,
+                        :file     => file[:tempfile],
+                        :user     => user
+      redirect "/"
     end
   end
 
