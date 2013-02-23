@@ -21,7 +21,9 @@ module ClientCubby
   class App < Sinatra::Base
     # middlewares
     use Rack::PostBodyContentTypeParser
-    use Rack::Session::Redis, :redis_server => "#{$redis.client.id}/client_cubby:session"
+    use Rack::Session::Redis,
+      :redis_server => "#{$redis.client.id}/client_cubby:session"
+    use Rack::Csrf, :raise => true
 
     # sinatra extensions
     register Sinatra::Contrib
@@ -34,7 +36,6 @@ module ClientCubby
       end
 
       def session_auth?
-        # TODO: check against the user in the URL?
         user.exists?
       end
 
@@ -50,14 +51,18 @@ module ClientCubby
     end
 
     get "/" do
-      haml :login
+      if session_auth?
+        haml :files
+      else
+        haml :login
+      end
     end
 
     post "/login" do
       if User.exists?(params[:username], params[:password])
         user = User.new(params[:username])
         session[:username] = user.name
-        redirect "/u/#{user.name}"
+        redirect "/"
       else
         # TODO: error message
         haml :login
@@ -69,24 +74,20 @@ module ClientCubby
       redirect "/"
     end
 
-    namespace "/u" do
+    namespace "/files" do
       before { redirect "/" unless session_auth? }
 
-      get "/:username" do
-        haml :files
-      end
-
-      post "/:username" do
+      post "/" do
         file = request.params["file"]
         file_id = user.create_file(file[:filename])
         UPLOAD_QUEUE.push :file_id  => file_id,
                           :file     => file[:tempfile],
                           :user     => user
-        redirect "/u/#{user.name}"
+        redirect "/"
       end
 
       get "/:username/:file_id" do
-
+        
       end
     end
   end
