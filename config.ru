@@ -1,3 +1,9 @@
 require "./app"
 
-run ClientCubby::App
+map "/" do
+  run ClientCubby::App
+end
+
+map "/assets" do
+  run ClientCubby::App.assets
+end

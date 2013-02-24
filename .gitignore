@@ -13,3 +13,5 @@ test/version_tmp
 tmp
 
 /config/env.yml
+
+/.sass-cache/

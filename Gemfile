@@ -6,6 +6,7 @@ gem "puma"
 
 gem "sinatra", require: "sinatra/base"
 gem "sinatra-contrib"
+gem "sinatra-support"
 gem "rack-contrib"
 gem "rack_csrf", require: "rack/csrf"
 gem "rack-protection", require: "rack/protection"
@@ -19,6 +20,20 @@ gem "girl_friday"
 
 gem "aws-sdk", require: "aws/s3"
 
+
+
 gem "haml"
 
-gem "pry"
+gem "sprockets"
+gem "sprockets-helpers"
+gem "sprockets-sass"
+
+gem "compass"
+gem "bootstrap-sass", github: "dleavitt/bootstrap-sass"
+gem "coffee-script"
+
+gem "uglifier"
+
+group :development do
+  gem "pry"
+end
