@@ -43,16 +43,6 @@ module ClientCubby
       def session_auth?
         user.exists?
       end
-
-      def http_auth?
-        auth = Rack::Auth::Basic::Request.new(request.env)
-
-        if auth.provided? && auth.basic && auth.credentials
-          return User.exists?(auth_credentials)
-        end
-
-        return false
-      end
     end
 
     get "/" do
