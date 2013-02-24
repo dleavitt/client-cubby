@@ -9,6 +9,12 @@
       %td
         %a{:href => "/files/#{file["id"]}"} Link
         %a{:href => "/files/#{file["id"]}/download"} Download
+      %td
+        %form{:action => "/files/#{file["id"]}", :method => "post"}
+          = Rack::Csrf.tag(env)
+          %input(type="hidden" name="_method" value="delete")
+          %input(type="submit" value="Delete")
+
 
 %form(action="/files" method="post" enctype="multipart/form-data")
   = Rack::Csrf.tag(env)

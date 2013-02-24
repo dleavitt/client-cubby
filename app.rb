@@ -17,8 +17,11 @@ $redis = Redis::Namespace.new(:client_cubby, :redis => Redis.new(
   :logger => Logger.new(STDOUT)
 ))
 
+ClientCubby::Upload.bucket_name = ENV['BUCKET_NAME']
+
 module ClientCubby
   class App < Sinatra::Base
+
     # middlewares
     use Rack::PostBodyContentTypeParser
     use Rack::Session::Redis,
@@ -29,6 +32,8 @@ module ClientCubby
     register Sinatra::Contrib
     register Sinatra::Reloader if development?
     also_reload "./lib/**.rb"
+
+    enable :method_override
 
     helpers do
       def user(name = nil)
@@ -51,11 +56,7 @@ module ClientCubby
     end
 
     get "/" do
-      if session_auth?
-        haml :files
-      else
-        haml :login
-      end
+      haml session_auth? ? :files : :login
     end
 
     post "/login" do
@@ -74,7 +75,9 @@ module ClientCubby
       redirect "/"
     end
 
-    before("/files*") { redirect "/" unless session_auth? }
+    before "/files*" do
+      redirect "/" unless session_auth?
+    end
 
     get "/files/:id" do
       # TODO: error if no file
@@ -83,27 +86,32 @@ module ClientCubby
     end
 
     get "/files/:id/download" do
-      @file = user.find_file(params[:id])
+      upload = Upload.new(params[:id], user.find_file(params[:id]))
+      redirect upload.get
     end
 
     post "/files" do
       file = request.params["file"]
       file_id = user.create_file(file[:filename])
-      UPLOAD_QUEUE.push :file_id  => file_id,
-                        :file     => file[:tempfile],
-                        :user     => user
+
+      UPLOAD_QUEUE.push Upload.new(file_id, :file => file[:tempfile])
+      redirect "/"
+    end
+
+    delete "/files/:id" do
+      if user.find_file(params[:id])
+        user.delete_file(params[:id])
+        Upload.new(params[:id]).delete
+      end
+
       redirect "/"
     end
   end
 
-  UPLOAD_QUEUE = GirlFriday::WorkQueue.new(:uploads, :size => 3) do |params|
+  UPLOAD_QUEUE = GirlFriday::WorkQueue.new(:uploads, :size => 3) do |upload|
     # TODO: logger
-    # TODO: content-type of file
-    obj = AWS::S3.new.buckets[ENV['BUCKET_NAME']].objects[params[:file_id]]
-    obj.write(params[:file])
-    obj.acl = :private
-
+    upload.put
     user = User.new("")
-    user.update_file(params[:file_id], :progress => 1)
+    user.update_file(upload.id, :progress => 1)
   end
 end

@@ -37,7 +37,8 @@ module ClientCubby
     end
 
     def find_file(file_id)
-      $redis.hgetall file_ns(file_id)
+      hsh = $redis.hgetall file_ns(file_id)
+      hsh.empty? ? nil : hsh
     end
 
     def create_file(filename)
@@ -54,6 +55,11 @@ module ClientCubby
 
     def update_file(file_id, attributes)
       $redis.hmset file_ns(file_id), *attributes.to_a.flatten
+    end
+
+    def delete_file(file_id)
+      $redis.srem files_ns, file_id
+      $redis.del file_ns(file_id)
     end
 
     def file_ns(filename)
