@@ -5,5 +5,5 @@ map "/" do
 end
 
 map "/assets" do
-  run ClientCubby::App.assets
+  run ClientCubby.asset_server(ClientCubby::App.root)
 end

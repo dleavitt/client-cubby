@@ -35,32 +35,6 @@ module ClientCubby
 
     enable :method_override
 
-    set :assets,        Sprockets::Environment.new(root)
-    set :precompile,    [ /\w+\.(?!js|css).+/, /application.(css|js)$/ ]
-    set :assets_prefix, '/assets'
-    set :digest_assets, false
-    set(:assets_path)   { File.join public_folder, assets_prefix }
-
-    configure do
-        # Setup Sprockets
-        %w{javascripts stylesheets images}.each do |type|
-          assets.append_path "assets/#{type}"
-          assets.append_path Compass::Frameworks['bootstrap'].templates_directory + "/../vendor/assets/#{type}"
-        end
-        assets.append_path 'assets/font'
-
-        # Configure Sprockets::Helpers (if necessary)
-        Sprockets::Helpers.configure do |config|
-          config.environment = assets
-          config.prefix      = assets_prefix
-          config.digest      = digest_assets
-          config.public_path = public_folder
-        end
-        Sprockets::Sass.add_sass_functions = false
-
-        set :haml, { :format => :html5 }
-      end
-
     helpers do
       include Sprockets::Helpers
 
@@ -90,6 +64,7 @@ module ClientCubby
 
     post "/logout" do
       session[:username] = nil
+      # TODO: delete record in redis
       redirect "/"
     end
 
@@ -112,7 +87,9 @@ module ClientCubby
       file = request.params["file"]
       file_id = user.create_file(file[:filename])
 
-      UPLOAD_QUEUE.push Upload.new(file_id, :file => file[:tempfile])
+      UPLOAD_QUEUE.push :upload => Upload.new(file_id, file: file[:tempfile]),
+                        :user => user
+
       redirect "/"
     end
 
@@ -126,10 +103,10 @@ module ClientCubby
     end
   end
 
-  UPLOAD_QUEUE = GirlFriday::WorkQueue.new(:uploads, :size => 3) do |upload|
+  UPLOAD_QUEUE = GirlFriday::WorkQueue.new(:uploads, :size => 3) do |params|
     # TODO: logger
-    upload.put
-    user = User.new("")
-    user.update_file(upload.id, :progress => 1)
+    p params
+    params[:upload].put
+    params[:user].update_file(params[:upload].id, :progress => 1)
   end
 end

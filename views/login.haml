@@ -1,5 +1,27 @@
-%form(action="/login" method="post")
-  = Rack::Csrf.tag(env)
-  %input(name="username" placeholder="username")
-  %input(type="password" name="password" placeholder="password")
-  %input(type="submit")
+.container
+  %header.splash
+    .row-fluid
+      .span12
+        %h1
+          HYFN Client Cubby
+          %small a place for files
+        %p.hidden-phone
+          A safe, well-lit place for files to live until they can be downloaded.
+          %br
+          Please enter your login info below or send an email to request access.
+
+  .row-fluid
+    .span12
+      %form#login-form(action="/login" method="post")
+        = Rack::Csrf.tag(env)
+
+        %legend.hidden-phone Log In
+
+        %label.hidden-phone(for="username") Client Account
+        %input#username.span6(type="text" name="username" placeholder="Account")
+
+        %label.hidden-phone(for="password") Password
+        %input#password.span6(type="password" name="password" placeholder="Password")
+        .form-actions
+          %button.btn.btn-primary(type="submit") Submit
+          %a.btn(href="mailto:daniel@hyfn.com?subject=Cubby Access") Request Access

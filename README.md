@@ -35,7 +35,7 @@ try prefixing the commands with `bundle exec` if they don't work
 - ui
 - tests
 
-## Screens
+## Features
 - File List
     - File type icon
     - File name
@@ -46,3 +46,5 @@ try prefixing the commands with `bundle exec` if they don't work
 - `GET /u/:username/:file_id`
   Download splash for the file
 - Special root page that shows all files
+- Secret link to file that bypasses u/p
+- Copy to clipboard

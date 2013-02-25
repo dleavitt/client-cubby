@@ -1,27 +1,30 @@
-!!!
-%head
-  %title Client Cubby
-  %link{ rel: 'stylesheet', href: stylesheet_path('app.css') }
-%body
-  %form(action="/logout" method="post")
-    = Rack::Csrf.tag(env)
-    %input(type="submit" value="Logout")
-
-  %table
-    - user.all_files.each do |file|
-      %tr
-        %td= file["name"]
-        %td
-          %a{href: "/files/#{file["id"]}"} Link
-          %a{href: "/files/#{file["id"]}/download"} Download
-        %td
-          %form{action: "/files/#{file["id"]}", method: "post"}
-            = Rack::Csrf.tag(env)
-            %input(type="hidden" name="_method" value="delete")
-            %input(type="submit" value="Delete")
-
-
-  %form(action="/files" method="post" enctype="multipart/form-data")
-    = Rack::Csrf.tag(env)
-    %input(type="file" name="file")
-    %input(type="submit")
+= haml :"_nav"
+.container
+  .row-fluid
+    %h3 Upload a File
+    %form#upload-form(action="/files" method="post" enctype="multipart/form-data")
+      = Rack::Csrf.tag(env)
+      %input(type="file" name="file")
+      %input(type="submit")
+  .row-fluid
+    %h3 Your Files
+    %table.table.table-striped
+      - user.all_files.each do |file|
+        %tr
+          - if file["progress"] == "1"
+            %td
+              %a{href: "/files/#{file["id"]}"}= file["name"]
+            %td.file-controls
+              %a.btn{href: "/files/#{file["id"]}/download"}
+                %i.icon-download
+                Download
+            %td.file-controls
+              %form.delete-form{action: "/files/#{file["id"]}", method: "post"}
+                = Rack::Csrf.tag(env)
+                %input(type="hidden" name="_method" value="delete")
+                %button.btn.btn-danger.btn-delete-file(type="submit")
+                  %i.icon-trash
+                  Delete
+          - else
+            %td= file["name"]
+            %td(colspan="2") Uploading...

@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/dleavitt/bootstrap-sass.git
-  revision: 7f995ab2d744ac979817710e095141072e089e9e
+  revision: e4b7ba03504b45aa4d82cc9575ba2e57c7763b87
   specs:
     bootstrap-sass (2.3.0.1)
       sass (~> 3.2)
