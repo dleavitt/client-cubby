@@ -2,10 +2,13 @@
 .container
   .row-fluid
     %h3 Upload a File
-    %form#upload-form(action="/files" method="post" enctype="multipart/form-data")
-      = Rack::Csrf.tag(env)
-      %input(type="file" name="file")
-      %input(type="submit")
+    #dropzone.well.span5
+      %form#upload-form(action="/files" method="post" enctype="multipart/form-data")
+        = Rack::Csrf.tag(env)
+        %input#upload-input(type="file" name="file")
+        %input.btn(type="submit")
+      .progress#progressbar
+        .bar(style="width:1%;")
   .row-fluid
     %h3 Your Files
     %table.table.table-striped
