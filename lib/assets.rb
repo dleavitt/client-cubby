@@ -6,6 +6,7 @@ module ClientCubby
     # Set up Sprockets
     %w(javascripts stylesheets images).each do |subdir|
       sprockets.append_path File.join(root, 'assets', subdir)
+      sprockets.append_path File.join(root, 'vendor', 'assets', subdir)
       %w(vendor lib app).each do |base_dir|
         # load for all gems
         Gem.loaded_specs.map(&:last).each do |gemspec|
@@ -14,7 +15,7 @@ module ClientCubby
         end
       end
     end
-    
+
     Sprockets::Helpers.configure do |config|
       config.environment = sprockets
       config.prefix      = "/assets"

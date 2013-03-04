@@ -4,6 +4,7 @@ require "logger"
 require "bundler"
 Bundler.require :default, ENV['RACK_ENV'] || :development
 require "sinatra/reloader"
+require "jquery/fileupload/rails/middleware"
 
 root = File.dirname(__FILE__)
 # require everything in lib folder
@@ -13,8 +14,8 @@ envfile = File.join(root, "config", "env.yml")
 YAML.load_file(envfile).each { |k,v| ENV[k] = v } if File.exist?(envfile)
 
 $redis = Redis::Namespace.new(:client_cubby, :redis => Redis.new(
-  :url => ENV['REDIS_URL'] || ENV['REDISTOGO_URL'],
-  :logger => Logger.new(STDOUT)
+  :url      => ENV['REDIS_URL'] || ENV['REDISTOGO_URL'],
+  :logger   => Logger.new(STDOUT)
 ))
 
 ClientCubby::Upload.bucket_name = ENV['BUCKET_NAME']
@@ -27,6 +28,7 @@ module ClientCubby
     use Rack::Session::Redis,
       :redis_server => "#{$redis.client.id}/client_cubby:session"
     use Rack::Csrf, :raise => true
+    use JQuery::FileUpload::Rails::Middleware
 
     # sinatra extensions
     register Sinatra::Contrib
@@ -84,13 +86,22 @@ module ClientCubby
     end
 
     post "/files" do
-      file = request.params["file"]
-      file_id = user.create_file(file[:filename])
+      p request.params
+      
+      request.params["files"].each do |file|
+        file_id = user.create_file(file[:filename])
 
-      UPLOAD_QUEUE.push :upload => Upload.new(file_id, file: file[:tempfile]),
-                        :user => user
+        UPLOAD_QUEUE.push :upload => Upload.new(file_id, file: file[:tempfile]),
+                          :user => user
+      end
 
-      redirect "/"
+      json({ status: true })
+
+      # if request.xhr?
+
+      # else
+      #   redirect "/"
+      # end
     end
 
     delete "/files/:id" do

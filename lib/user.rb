@@ -34,6 +34,7 @@ module ClientCubby
     def all_files
       file_ids = $redis.smembers files_ns
       $redis.pipelined { |r| file_ids.map { |id| r.hgetall(file_ns(id)) } }
+        .sort_by { |f| f["timestamp"] }.reverse
     end
 
     def find_file(file_id)
@@ -54,7 +55,7 @@ module ClientCubby
     end
 
     def update_file(file_id, attributes)
-      $redis.hmset file_ns(file_id), *attributes.to_a.flatten
+      $redis.mapped_hmset file_ns(file_id), attributes
     end
 
     def delete_file(file_id)
