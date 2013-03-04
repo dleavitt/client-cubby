@@ -2,33 +2,16 @@
 .container
   .row-fluid
     %h3 Upload a File
-    #dropzone.well
-      %form#upload-form(action="/files" method="post" enctype="multipart/form-data")
-        = Rack::Csrf.tag(env)
-        .fileupload-buttonbar
-          %span.btn.btn-success.fileinput-button
-            %i.icon-plus.icon-white
-            %span Add file
-            %input#upload-input(type="file" name="files[]" multiple)
-          %button.btn.btn-primary.start{:type => "submit"}
-            %i.icon-upload.icon-white
-            %span Start upload
-          %button.btn.btn-warning.cancel{:type => "reset"}
-            %i.icon-ban-circle.icon-white
-            %span Cancel upload
-          / %button.btn.btn-danger.delete{:type => "button"}
-          /   %i.icon-trash.icon-white
-          /   %span Delete
-          / %input.toggle{:type => "checkbox"}/
-        / The global progress information
-        .span5.fileupload-progress.fade
-          / The global progress bar
-          .progress.progress-success.progress-striped.active{:role => "progressbar"}
-            .bar{:style => "width:0%;"}
-          / The extended global progress information
-          .progress-extended  
-      / The loading indicator is shown during file processing
-      .fileupload-loading
+    %form#upload-form(action="/files" method="post" enctype="multipart/form-data")
+      = Rack::Csrf.tag(env)
+      .fileupload-buttonbar
+        %span.btn.btn-success.fileinput-button
+          %i.icon-plus.icon-white
+          %span Add file
+          %input#upload-input(type="file" name="files[]")
+        %button.btn.btn-primary.start{:type => "submit"}
+          %i.icon-upload.icon-white
+          %span Start upload
 
 
         / %input#upload-input(type="file" name="file")
@@ -53,9 +36,11 @@
     {{^done}}
     %td {{name}}
     %td.file-controls
-      .progress#progressbar
-        .bar(style="width:10%;")
+      .progress.progress-striped.active
+        .bar(style="width:100%;")
+      {{#path}}
       {{>tmp_delete_btn}}
+      {{/path}}
     {{/done}}
 
 %script(id="tmp_delete_btn" class="partial" type="text/html")

@@ -1,7 +1,8 @@
 @import "compass"
 @import "bootstrap"
 @import "bootstrap-responsive"
-@import "jquery.fileupload-ui"
+// @import "jquery.fileupload-ui"
+
 
 #login-form
 
@@ -13,11 +14,30 @@
 
 td.file-controls
   text-align: right
+  .progress
+    display: inline-block
+    width: 100px
+    margin: 0 4px 0 0
 
 #download-prompt
   text-align: center
   margin-top: 20px
 
-#progressbar
+.fileinput-button
+  position: relative
+  overflow: hidden
   float: left
-  // visibility: hidden
+  margin-right: 4px
+
+.fileinput-button input
+  position: absolute
+  top: 0
+  right: 0
+  margin: 0
+  border: solid transparent
+  border-width: 0 0 100px 200px
+  opacity: 0
+  filter: alpha(opacity=0)
+  -moz-transform: translate(-300px, 0) scale(4)
+  direction: ltr
+  cursor: pointer

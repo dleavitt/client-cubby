@@ -4,7 +4,7 @@ require "logger"
 require "bundler"
 Bundler.require :default, ENV['RACK_ENV'] || :development
 require "sinatra/reloader"
-require "jquery/fileupload/rails/middleware"
+# require "jquery/fileupload/rails/middleware"
 
 root = File.dirname(__FILE__)
 # require everything in lib folder
@@ -28,7 +28,9 @@ module ClientCubby
     use Rack::Session::Redis,
       :redis_server => "#{$redis.client.id}/client_cubby:session"
     use Rack::Csrf, :raise => true
-    use JQuery::FileUpload::Rails::Middleware
+    # use JQuery::FileUpload::Rails::Middleware
+    use Rack::RawUpload
+
 
     # sinatra extensions
     register Sinatra::Contrib
@@ -86,22 +88,19 @@ module ClientCubby
     end
 
     post "/files" do
-      p request.params
-      
-      request.params["files"].each do |file|
+      file_ids = request.params["files"].map do |file|
         file_id = user.create_file(file[:filename])
-
         UPLOAD_QUEUE.push :upload => Upload.new(file_id, file: file[:tempfile]),
                           :user => user
+
+        file_id
       end
 
-      json({ status: true })
-
-      # if request.xhr?
-
-      # else
-      #   redirect "/"
-      # end
+      if request.xhr?
+        json ids: file_ids
+      else
+        redirect "/"
+      end
     end
 
     delete "/files/:id" do
@@ -114,9 +113,8 @@ module ClientCubby
     end
   end
 
-  UPLOAD_QUEUE = GirlFriday::WorkQueue.new(:uploads, :size => 3) do |params|
+  UPLOAD_QUEUE = GirlFriday::WorkQueue.new(:uploads, :size => 6) do |params|
     # TODO: logger
-    p params
     params[:upload].put
     params[:user].update_file(params[:upload].id, :progress => 1)
   end

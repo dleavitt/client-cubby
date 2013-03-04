@@ -4,6 +4,7 @@
   %title Client Cubby
   %meta(name="viewport" content="width=device-width, initial-scale=1.0")
   = stylesheet_tag "app.css", expand: settings.development?
+  = Rack::Csrf.metatag(env)
 %body
   = yield
   = javascript_tag "app.js", expand: settings.development?

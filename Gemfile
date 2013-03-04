@@ -29,7 +29,8 @@ gem "uglifier"
 
 gem "bootstrap-sass", require: false
 gem "jquery-rails", require: false
-gem "jquery-fileupload-rails", require: false
+# gem "jquery-fileupload-rails", require: false
+gem 'rack-raw-upload'
 
 group :development do
   gem "pry"
