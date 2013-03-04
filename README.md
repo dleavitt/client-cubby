@@ -34,6 +34,7 @@ try prefixing the commands with `bundle exec` if they don't work
 
 - ui
 - tests
+- newrelic
 
 ## Features
 - File List

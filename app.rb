@@ -5,7 +5,7 @@ require "bundler"
 Bundler.require :default, ENV['RACK_ENV'] || :development
 require "sinatra/reloader"
 require "jquery/fileupload/rails/middleware"
-  
+
 root = File.dirname(__FILE__)
 # require everything in lib folder
 Dir[File.join(root, "lib" "**", "*.rb")].each(&method(:require))
@@ -86,13 +86,22 @@ module ClientCubby
     end
 
     post "/files" do
-      file = request.params["file"]
-      file_id = user.create_file(file[:filename])
+      p request.params
+      
+      request.params["files"].each do |file|
+        file_id = user.create_file(file[:filename])
 
-      UPLOAD_QUEUE.push :upload => Upload.new(file_id, file: file[:tempfile]),
-                        :user => user
+        UPLOAD_QUEUE.push :upload => Upload.new(file_id, file: file[:tempfile]),
+                          :user => user
+      end
 
-      redirect "/"
+      json({ status: true })
+
+      # if request.xhr?
+
+      # else
+      #   redirect "/"
+      # end
     end
 
     delete "/files/:id" do

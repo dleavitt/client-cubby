@@ -2,32 +2,66 @@
 .container
   .row-fluid
     %h3 Upload a File
-    #dropzone.well.span5
+    #dropzone.well
       %form#upload-form(action="/files" method="post" enctype="multipart/form-data")
         = Rack::Csrf.tag(env)
-        %input#upload-input(type="file" name="file")
-        %input.btn(type="submit")
-      .progress#progressbar
-        .bar(style="width:1%;")
+        .fileupload-buttonbar
+          %span.btn.btn-success.fileinput-button
+            %i.icon-plus.icon-white
+            %span Add file
+            %input#upload-input(type="file" name="files[]" multiple)
+          %button.btn.btn-primary.start{:type => "submit"}
+            %i.icon-upload.icon-white
+            %span Start upload
+          %button.btn.btn-warning.cancel{:type => "reset"}
+            %i.icon-ban-circle.icon-white
+            %span Cancel upload
+          / %button.btn.btn-danger.delete{:type => "button"}
+          /   %i.icon-trash.icon-white
+          /   %span Delete
+          / %input.toggle{:type => "checkbox"}/
+        / The global progress information
+        .span5.fileupload-progress.fade
+          / The global progress bar
+          .progress.progress-success.progress-striped.active{:role => "progressbar"}
+            .bar{:style => "width:0%;"}
+          / The extended global progress information
+          .progress-extended  
+      / The loading indicator is shown during file processing
+      .fileupload-loading
+
+
+        / %input#upload-input(type="file" name="file")
+        / %input.btn(type="submit")
   .row-fluid
     %h3 Your Files
-    %table.table.table-striped
-      - user.all_files.each do |file|
-        %tr
-          - if file["progress"] == "1"
-            %td
-              %a{href: "/files/#{file["id"]}"}= file["name"]
-            %td.file-controls
-              %a.btn{href: "/files/#{file["id"]}/download"}
-                %i.icon-download
-                Download
-            %td.file-controls
-              %form.delete-form{action: "/files/#{file["id"]}", method: "post"}
-                = Rack::Csrf.tag(env)
-                %input(type="hidden" name="_method" value="delete")
-                %button.btn.btn-danger.btn-delete-file(type="submit")
-                  %i.icon-trash
-                  Delete
-          - else
-            %td= file["name"]
-            %td(colspan="2") Uploading...
+    %table#files-table.table.table-striped
+
+%script
+  = "window.files = #{user.all_files.to_json}"
+%script(id="tmp_file" type="text/html")
+  %tr
+    {{#done}}
+    %td
+      %a{href: "{{path}}"} {{name}}
+    %td.file-controls
+      %a.btn{href: "{{dlpath}}"}
+        %i.icon-download
+        Download
+      {{>tmp_delete_btn}}
+    {{/done}}
+    {{^done}}
+    %td {{name}}
+    %td.file-controls
+      .progress#progressbar
+        .bar(style="width:10%;")
+      {{>tmp_delete_btn}}
+    {{/done}}
+
+%script(id="tmp_delete_btn" class="partial" type="text/html")
+  %form.delete-form{action: "{{path}}", method: "post"}
+    = Rack::Csrf.tag(env)
+    %input(type="hidden" name="_method" value="delete")
+    %button.btn.btn-danger.btn-delete-file(type="submit")
+      %i.icon-trash
+      Delete
