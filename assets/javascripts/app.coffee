@@ -1,7 +1,4 @@
 #= require jquery
-#  require jquery-fileupload/vendor/jquery.ui.widget
-#  require jquery-fileupload/jquery.iframe-transport
-#  require jquery-fileupload/jquery.fileupload
 #= require jquery.ajax.progress
 #= require ich
 
@@ -22,6 +19,8 @@ $ ->
   if $("#upload-form").length
     $table = $("#files-table")
     $table.append(ich.tmp_file(blessFile(file))) for file in window.files
+
+    $("#upload-input").change (e) -> $("#upload-form").submit()
 
     $("#upload-form").submit (e) ->
       e.preventDefault()
@@ -46,24 +45,26 @@ $ ->
         contentType: false
         processData: false
         type: 'POST'
+
         success: (data) ->
-          $row.replaceWith(ich.tmp_file(
+          log "file uploaded"
+          $row = $row.replaceWith(ich.tmp_file(
             name: file.name
             path: "/files/#{data.ids[0]}"
           ))
+          log $row
+          statusCallback = (file) ->
+            if file?.progress is "1"
+              # TODO: this replaces the whole table
+              $row.replaceWith($table.append(ich.tmp_file(blessFile(file))))
+            else
+              to = setTimeout ->
+                clearTimeout(to)
+                $.getJSON "/files/#{data.ids[0]}", statusCallback
+              , 500
+          statusCallback()
+
         progress: (e) ->
           $progress.removeClass("striped").removeClass("active")
           if e.lengthComputable
             $bar.css("width", ((e.loaded / e.total) * 100)+"%")
-
-    # $("#upload-input").fileupload
-    #   add: -> log(arguments)
-    #   done: -> log(arguments)
-    #   always: -> log(arguments)
-    #   start: -> log(arguments)
-    #   filesContainer: $table
-    #   dropZone: $("#dropzone")
-    #   uploadTemplateId: "tmp_file"
-    #   downloadTemplateId: "tmp_file"
-    #   uploadTemplate: (o) -> console.log arguments
-    #   downloadTemplate: (o) -> console.log arguments

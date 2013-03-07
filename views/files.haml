@@ -5,14 +5,10 @@
     %form#upload-form(action="/files" method="post" enctype="multipart/form-data")
       = Rack::Csrf.tag(env)
       .fileupload-buttonbar
-        %span.btn.btn-success.fileinput-button
-          %i.icon-plus.icon-white
-          %span Add file
-          %input#upload-input(type="file" name="files[]")
-        %button.btn.btn-primary.start{:type => "submit"}
+        %span.btn.btn-primary.fileinput-button
           %i.icon-upload.icon-white
-          %span Start upload
-
+          %span Upload file
+          %input#upload-input(type="file" name="files[]")
 
         / %input#upload-input(type="file" name="file")
         / %input.btn(type="submit")

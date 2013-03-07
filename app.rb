@@ -4,12 +4,13 @@ require "logger"
 require "bundler"
 Bundler.require :default, ENV['RACK_ENV'] || :development
 require "sinatra/reloader"
-# require "jquery/fileupload/rails/middleware"
 
 root = File.dirname(__FILE__)
+
 # require everything in lib folder
 Dir[File.join(root, "lib" "**", "*.rb")].each(&method(:require))
 
+# set env variables from env.yml
 envfile = File.join(root, "config", "env.yml")
 YAML.load_file(envfile).each { |k,v| ENV[k] = v } if File.exist?(envfile)
 
@@ -28,14 +29,13 @@ module ClientCubby
     use Rack::Session::Redis,
       :redis_server => "#{$redis.client.id}/client_cubby:session"
     use Rack::Csrf, :raise => true
-    # use JQuery::FileUpload::Rails::Middleware
     use Rack::RawUpload
 
 
     # sinatra extensions
     register Sinatra::Contrib
     register Sinatra::Reloader if development?
-    also_reload "./lib/**.rb"
+    also_reload File.join(root, "lib", "**.rb")
 
     enable :method_override
 
@@ -72,6 +72,7 @@ module ClientCubby
       redirect "/"
     end
 
+    # require auth
     before "/files*" do
       redirect "/" unless session_auth?
     end
@@ -79,7 +80,11 @@ module ClientCubby
     get "/files/:id" do
       # TODO: error if no file
       @file = user.find_file(params[:id])
-      haml :file
+      if request.xhr?
+        json @file
+      else
+        haml :file
+      end
     end
 
     get "/files/:id/download" do

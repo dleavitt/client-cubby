@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-ruby "1.9.3", engine: "jruby", engine_version: "1.7.0"
+# ruby "1.9.3", engine: "jruby", engine_version: "1.7.0"
 
 gem "puma"
 
@@ -28,8 +28,6 @@ gem "coffee-script"
 gem "uglifier"
 
 gem "bootstrap-sass", require: false
-gem "jquery-rails", require: false
-# gem "jquery-fileupload-rails", require: false
 gem 'rack-raw-upload'
 
 group :development do

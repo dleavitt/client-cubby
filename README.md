@@ -33,7 +33,6 @@ try prefixing the commands with `bundle exec` if they don't work
 ## TODO
 
 - poll for s3 upload completion
-- get rid of jquploader cruft
 - multi-file upload
 - upload immediately on file chosen
 - IE feature detection / fallback
