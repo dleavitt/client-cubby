@@ -1,12 +1,11 @@
-
-= haml :"_nav"
+!= haml :"_nav"
 .container
   .row-fluid
     .span8.offset2#download-prompt.well
       %h4= @file["name"]
       %a.btn.btn-large.btn-success{:href => "/files/#{@file["id"]}/download"}
         Download File
-      %h5= Time.at(@file["timestamp"].to_i).strftime("%B %e, %Y %I:%M %p %Z")
+      %h5!= Time.at(@file["timestamp"].to_i).strftime("%B %e, %Y %I:%M %p %Z")
   .row-fluid
     .span8.offset2
       %a(href="/") &larr; All Files

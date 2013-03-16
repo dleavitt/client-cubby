@@ -7,5 +7,5 @@
       %ul.nav.pull-right
         %li
           %form#logout-form(action="/logout" method="post")
-            = Rack::Csrf.tag(env)
+            != Rack::Csrf.tag(env)
             %input.btn(type="submit" value="Log Out")

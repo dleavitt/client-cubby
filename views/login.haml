@@ -13,10 +13,10 @@
   .row-fluid
     .span12
       %form#login-form(action="/login" method="post")
-        = Rack::Csrf.tag(env)
+        != Rack::Csrf.tag(env)
 
         %legend.hidden-phone Log In
-
+        
         %label.hidden-phone(for="username") Client Account
         %input#username.span6(type="text" name="username" placeholder="Account")
 

@@ -31,13 +31,14 @@ module ClientCubby
     use Rack::Csrf, :raise => true
     use Rack::RawUpload
 
-
     # sinatra extensions
     register Sinatra::Contrib
     register Sinatra::Reloader if development?
     also_reload File.join(root, "lib", "**.rb")
 
+    # config
     enable :method_override
+    set :haml, :escape_html => true
 
     helpers do
       include Sprockets::Helpers
