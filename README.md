@@ -32,12 +32,11 @@ try prefixing the commands with `bundle exec` if they don't work
 
 ## TODO
 
-- poll for s3 upload completion
 - multi-file upload
-- upload immediately on file chosen
 - IE feature detection / fallback
 - tests
 - newrelic
+- better way to set accounts (google doc?)
 
 ## Features
 - File List

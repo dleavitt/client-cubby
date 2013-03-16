@@ -1,6 +1,7 @@
 #= require jquery
 #= require jquery.ajax.progress
 #= require ich
+#= require bootstrap-button
 
 window.log = -> @console?.log?(arguments...)
 
@@ -12,6 +13,9 @@ blessFile = (file) ->
     dlpath: "/files/#{file.id}/download"
     done: file.progress is "1"
     file
+
+#
+$(document).on 'click', "button[data-loading-text]", -> $(this).button("loading")
 
 $ ->
   $(".delete-form").submit -> confirm "Really delete this file?"
@@ -56,7 +60,6 @@ $ ->
 
           statusCallback = (file) ->
             if file?.progress is "1"
-              # TODO: this replaces the whole table
               $newRow.replaceWith(ich.file_template(blessFile(file)))
             else
               to = setTimeout ->

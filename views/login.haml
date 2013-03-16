@@ -16,12 +16,12 @@
         != Rack::Csrf.tag(env)
 
         %legend.hidden-phone Log In
-        
+
         %label.hidden-phone(for="username") Client Account
         %input#username.span6(type="text" name="username" placeholder="Account")
 
         %label.hidden-phone(for="password") Password
         %input#password.span6(type="password" name="password" placeholder="Password")
         .form-actions
-          %button.btn.btn-primary(type="submit") Submit
+          %button.btn.btn-primary(type="submit" data-loading-text="Signing In...") Sign In
           %a.btn(href="mailto:daniel@hyfn.com?subject=Cubby Access") Request Access

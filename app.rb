@@ -102,11 +102,7 @@ module ClientCubby
         file_id
       end
 
-      if request.xhr?
-        json ids: file_ids
-      else
-        redirect "/"
-      end
+      request.xhr? ? json(ids: file_ids) : redirect("/")
     end
 
     delete "/files/:id" do

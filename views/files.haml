@@ -43,6 +43,6 @@
   %form.delete-form{action: "{{path}}", method: "post"}
     != Rack::Csrf.tag(env)
     %input(type="hidden" name="_method" value="delete")
-    %button.btn.btn-danger.btn-delete-file(type="submit")
+    %button.btn.btn-danger.btn-delete-file(type="submit" data-loading-text="Deleting...")
       %i.icon-trash
       Delete
