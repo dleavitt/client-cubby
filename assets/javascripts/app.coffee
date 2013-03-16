@@ -9,7 +9,7 @@ window.tmpl = (id) -> ich[id]
 blessFile = (file) ->
   $.extend
     path: "/files/#{file.id}"
-    dlpath: "#{file.path}/download"
+    dlpath: "/files/#{file.id}/download"
     done: file.progress is "1"
     file
 
@@ -18,7 +18,7 @@ $ ->
 
   if $("#upload-form").length
     $table = $("#files-table")
-    $table.append(ich.tmp_file(blessFile(file))) for file in window.files
+    $table.append(ich.file_template(blessFile(file))) for file in window.files
 
     $("#upload-input").change (e) -> $("#upload-form").submit()
 
@@ -32,7 +32,7 @@ $ ->
       formData.append('files[]', file)
       formData.append('_csrf', $("meta[name=_csrf]").attr("content"))
 
-      $table.prepend(ich.tmp_file(name: file.name))
+      $table.prepend(ich.file_template(name: file.name))
 
       $row      = $table.find("tr:first")
       $progress = $row.find(".progress")
@@ -48,15 +48,16 @@ $ ->
 
         success: (data) ->
           log "file uploaded"
-          $row = $row.replaceWith(ich.tmp_file(
+          $newRow = ich.file_template
             name: file.name
             path: "/files/#{data.ids[0]}"
-          ))
-          log $row
+
+          $row.replaceWith($newRow)
+
           statusCallback = (file) ->
             if file?.progress is "1"
               # TODO: this replaces the whole table
-              $row.replaceWith($table.append(ich.tmp_file(blessFile(file))))
+              $newRow.replaceWith(ich.file_template(blessFile(file)))
             else
               to = setTimeout ->
                 clearTimeout(to)

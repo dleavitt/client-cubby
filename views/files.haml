@@ -18,7 +18,7 @@
 
 %script
   = "window.files = #{user.all_files.to_json}"
-%script(id="tmp_file" type="text/html")
+%script(id="file_template" type="text/html")
   %tr
     {{#done}}
     %td

@@ -9,8 +9,9 @@ gem "sinatra-contrib"
 gem "sinatra-support"
 gem "rack-contrib"
 gem "rack_csrf", require: "rack/csrf"
-gem "rack-protection", require: "rack/protection"
+gem "rack-protection"
 gem "rack-flash3"
+gem "rack-raw-upload"
 
 gem "redis"
 gem "redis-namespace-with-multi", require: "redis/namespace"
@@ -28,7 +29,7 @@ gem "coffee-script"
 gem "uglifier"
 
 gem "bootstrap-sass", require: false
-gem 'rack-raw-upload'
+gem "jquery-rails", require: false
 
 group :development do
   gem "pry"
