@@ -20,6 +20,13 @@ I need an FTP!
 
 try prefixing the commands with `bundle exec` if they don't work
 
+prefix them with `heroku run` to run them on Heroku (assuming you've been added as a collaborator.)
+For instance, you can add a new user to the app like so: 
+
+      $ heroku run rake create_user[clientname] -a client-cubby
+      
+Be sure to note the generated password!
+
 ## Data Model
 
 - `STRING users:$name` password
