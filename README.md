@@ -5,7 +5,7 @@ I need an FTP!
 ## Setup
 
 - install rbenv
-- install jruby 1.7
+- install ~~jruby 1.7~~ ruby 1.9.3
 - install redis
 - copy `config/env.sample.yml` to `config/env.yml` and fill it in
 - run: `gem install bundler`
@@ -14,7 +14,7 @@ I need an FTP!
 
 ## Run
 
-- the server: `rackup`
+- the server: `rackup` (app will be available at [http://localhost:9292](http://localhost:9292))
 - repl: `pry`
 - tasks: `rake -T`
 
