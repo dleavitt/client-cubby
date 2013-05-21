@@ -13,3 +13,9 @@ task :create_user, [:name] => [:env] do |t,args|
   user = ClientCubby::User.create(args[:name])
   puts "Created user '#{user.name}' with password '#{user.password}'"
 end
+
+desc "List users"
+task :list_users => [:env] do 
+  puts 'Users: ' if STDOUT.tty?
+  $redis.keys("users:*").each { |u| puts u.split(':')[1] }
+end
