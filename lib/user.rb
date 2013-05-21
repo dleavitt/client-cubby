@@ -4,6 +4,8 @@ module ClientCubby
     attr_reader :name
 
     def self.create(name, password = nil)
+      raise "Invalid User Name" unless name && name[/[\w\d-]+/] 
+      
       password ||= SecureRandom.urlsafe_base64(8)
       user = new(name)
       $redis.set user.ns, password
