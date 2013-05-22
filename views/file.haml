@@ -3,7 +3,7 @@
   .row-fluid
     .span8.offset2#download-prompt.well
       %h4= @file["name"]
-      %a.btn.btn-large.btn-success{:href => "/files/#{@file["id"]}/download"}
+      %a.btn.btn-large.btn-success{:href => url("/files/#{@file["id"]}/download")}
         Download File
       %h5!= Time.at(@file["timestamp"].to_i).strftime("%B %e, %Y %I:%M %p %Z")
   .row-fluid

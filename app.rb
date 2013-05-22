@@ -6,9 +6,10 @@ Bundler.require :default, ENV['RACK_ENV'] || :development
 require "sinatra/reloader"
 
 root = File.dirname(__FILE__)
-
+LIB_PATH = File.join(root, "lib" "**", "*.rb")
+  
 # require everything in lib folder
-Dir[File.join(root, "lib" "**", "*.rb")].each(&method(:require))
+Dir[LIB_PATH].each(&method(:require))
 
 # set env variables from env.yml
 envfile = File.join(root, "config", "env.yml")
@@ -33,8 +34,11 @@ module ClientCubby
 
     # sinatra extensions
     register Sinatra::Contrib
-    register Sinatra::Reloader if development?
-    also_reload File.join(root, "lib", "**.rb")
+
+    configure :development do
+      register Sinatra::Reloader
+      also_reload LIB_PATH
+    end
 
     # config
     enable :method_override
@@ -60,7 +64,7 @@ module ClientCubby
       if User.exists?(params[:username], params[:password])
         user = User.new(params[:username])
         session[:username] = user.name
-        redirect "/"
+        redirect to "/"
       else
         # TODO: error message
         haml :login
@@ -70,12 +74,12 @@ module ClientCubby
     post "/logout" do
       session[:username] = nil
       # TODO: delete record in redis
-      redirect "/"
+      redirect to "/"
     end
 
     # require auth
     before "/files*" do
-      redirect "/" unless session_auth?
+      redirect to "/" unless session_auth?
     end
 
     get "/files/:id" do
@@ -90,7 +94,7 @@ module ClientCubby
 
     get "/files/:id/download" do
       upload = Upload.new(params[:id], user.find_file(params[:id]))
-      redirect upload.get
+      redirect to upload.get
     end
 
     post "/files" do
@@ -102,7 +106,7 @@ module ClientCubby
         file_id
       end
 
-      request.xhr? ? json(ids: file_ids) : redirect("/")
+      request.xhr? ? json(ids: file_ids) : redirect(to "/")
     end
 
     delete "/files/:id" do
@@ -111,7 +115,7 @@ module ClientCubby
         Upload.new(params[:id]).delete
       end
 
-      redirect "/"
+      redirect to "/"
     end
   end
 

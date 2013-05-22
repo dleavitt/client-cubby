@@ -58,6 +58,10 @@ See also: http://wiki.hyfnrsx1.com/wiki/heroku-deployment#Useful-Heroku-commands
 
 ## TODO
 
+- progress bar doesn't work
+- either warn before navigating away or figure out some way to keep the file uploading when they do
+- poll upload status when returning to page
+- handle delete, etc. through ajax
 - multi-file upload
 - IE feature detection / fallback
 - tests
