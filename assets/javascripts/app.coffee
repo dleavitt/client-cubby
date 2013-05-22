@@ -5,15 +5,6 @@
 
 window.log = -> @console?.log?(arguments...)
 
-window.tmpl = (id) -> ich[id]
-
-blessFile = (file) ->
-  $.extend
-    path: "/files/#{file.id}"
-    dlpath: "/files/#{file.id}/download"
-    done: file.progress is "1"
-    file
-
 #
 $(document).on 'click', "button[data-loading-text]", -> $(this).button("loading")
 
@@ -21,6 +12,14 @@ $ ->
   $(".delete-form").submit -> confirm "Really delete this file?"
 
   if $("#upload-form").length
+
+    blessFile = (file) ->
+      $.extend
+        path: "/files/#{file.id}"
+        dlpath: "/files/#{file.id}/download"
+        done: file.progress is "1"
+        file
+    
     $table = $("#files-table")
     $table.append(ich.file_template(blessFile(file))) for file in window.files
 
@@ -69,6 +68,7 @@ $ ->
           statusCallback()
 
         progress: (e) ->
+          log "progress", e
           $progress.removeClass("striped").removeClass("active")
           if e.lengthComputable
             $bar.css("width", ((e.loaded / e.total) * 100)+"%")
