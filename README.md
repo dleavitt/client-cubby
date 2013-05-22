@@ -27,6 +27,25 @@ For instance, you can add a new user to the app like so:
       
 Be sure to note the generated password!
 
+## Deploy
+
+
+Add Heroku as a remote:
+
+      $ git remote add heroku git@heroku.com:client-cubby.git
+
+Deploy it:
+
+      $ git push heroku master 
+
+Run stuff:
+      
+      $ heroku run rake console
+      $ heroku run rake create_user[clientname]
+      
+Suffix with `-a client-cubby` if you're not in the app directory. 
+See also: http://wiki.hyfnrsx1.com/wiki/heroku-deployment#Useful-Heroku-commands
+
 ## Data Model
 
 - `STRING users:$name` password
