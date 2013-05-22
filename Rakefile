@@ -25,3 +25,9 @@ task :list_users => [:env] do
   puts 'Users: ' if STDOUT.tty?
   $redis.keys("users:*").each { |u| puts u.split(':')[1] }
 end
+
+desc "Open a console on Heroku"
+task :console => [:env] do
+  require "pry"
+  binding.pry
+end

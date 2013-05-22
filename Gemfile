@@ -34,3 +34,7 @@ gem "jquery-rails", require: false
 group :development do
   gem "pry"
 end
+
+group :production do
+  gem "pry", require: false
+end
