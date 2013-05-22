@@ -14,6 +14,12 @@ task :create_user, [:name] => [:env] do |t,args|
   puts "Created user '#{user.name}' with password '#{user.password}'"
 end
 
+desc "Delete an existing user"
+task :delete_user, [:name] => [:env] do |t,args|
+  user = ClientCubby::User.new(args[:name])
+  puts (user.delete ? "Deleted" : "Could not delete") + " user '#{user.name}'"
+end
+
 desc "List users"
 task :list_users => [:env] do 
   puts 'Users: ' if STDOUT.tty?

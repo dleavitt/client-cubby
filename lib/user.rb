@@ -33,6 +33,11 @@ module ClientCubby
       $redis.exists ns
     end
 
+    def delete
+      $redis.del(ns) == 1 ? true : false  
+    end
+
+
     def all_files
       file_ids = $redis.smembers files_ns
       $redis.pipelined { |r| file_ids.map { |id| r.hgetall(file_ns(id)) } }
